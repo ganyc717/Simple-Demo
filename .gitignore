@@ -27,3 +27,6 @@
 *.exe
 *.out
 *.app
+
+# What is this?
+*.opendb
