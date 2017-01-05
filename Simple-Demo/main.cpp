@@ -83,13 +83,13 @@ int main()
 	egl.InitEGL(win.getMyWindow());
 
 	GLuint vertexshader, fragmentshader, program = 0;
-	if (!GenerateShader("vertex.txt", vertexshader, GL_VERTEX_SHADER))
+	if (!GenerateShader(".\\shader\\vertex.txt", vertexshader, GL_VERTEX_SHADER))
 	{
 		glDeleteShader(vertexshader);
 		system("pause");
 		return 0;
 	}
-	if (!GenerateShader("fragment.txt", fragmentshader, GL_FRAGMENT_SHADER))
+	if (!GenerateShader(".\\shader\\fragment.txt", fragmentshader, GL_FRAGMENT_SHADER))
 	{
 		glDeleteShader(vertexshader);
 		glDeleteShader(fragmentshader);
