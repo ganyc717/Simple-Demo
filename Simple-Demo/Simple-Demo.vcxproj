@@ -19,14 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="fileops.hpp" />
-    <ClInclude Include="myEGL.h" />
-    <ClInclude Include="myWindow.h" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="myEGL.cpp" />
     <ClCompile Include="myWindow.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\fileops.hpp" />
+    <ClInclude Include="include\myEGL.h" />
+    <ClInclude Include="include\myWindow.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3E6A0453-81E7-4338-9C36-AC12031266AF}</ProjectGuid>
