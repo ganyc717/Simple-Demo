@@ -24,6 +24,9 @@
     <ClCompile Include="myEGL.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="myTexture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\fileops.hpp">
@@ -33,6 +36,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="include\myWindow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\myTexture.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

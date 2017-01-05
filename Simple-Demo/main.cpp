@@ -1,7 +1,9 @@
 #include"myWindow.h"
 #include"fileops.hpp"
 #include"myEGL.h"
+#include"myTexture.h"
 #include<GLES3/gl3.h>
+
 
 
 using namespace std;
@@ -13,19 +15,22 @@ enum Log_Type
 };
 
 GLfloat Vertex[] = {
-	-0.5,-0.5,-0.5,
-	0.0,0.5,0.5,
-	0.5,-0.5,0.0
+	-1.0,1.0,0.0,
+	1.0,1.0,0.0,
+	1.0,-1.0,0.0,
+	-1.0,-1.0,0.0
 };
 
 GLuint Index[] = {
-	0,1,2
+	0,1,2,
+	2,3,0
 };
 
-GLfloat Color[] = {
-	1.0,0.0,0.0,
-	0.0,1.0,0.0,
-	0.0,0.0,1.0,
+GLfloat Texcoord[] = {
+	0.0,0.0,
+	1.0,0.0,
+	1.0,1.0,
+	0.0,1.0
 };
 
 void PrintLog(GLuint handle,Log_Type type)
@@ -114,18 +119,28 @@ int main()
 		return 0;
 	}
 	glUseProgram(program);
+	glDeleteShader(vertexshader);
+	glDeleteShader(fragmentshader);
 
-	GLint color_location = glGetAttribLocation(program, "in_color");
+	GLint texcoord_location = glGetAttribLocation(program, "cord");
 	GLint position_location = glGetAttribLocation(program, "position");
+	GLint sampler_location = glGetUniformLocation(program, "sampler");
 	GLuint index_buffer;
 
 	glVertexAttribPointer(position_location, 3, GL_FLOAT, 0, 0, Vertex);
-	glVertexAttribPointer(color_location, 3, GL_FLOAT, 0, 0, Color);
+	glVertexAttribPointer(texcoord_location, 2, GL_FLOAT, 0, 0, Texcoord);
 	glEnableVertexAttribArray(position_location);
-	glEnableVertexAttribArray(color_location);
+	glEnableVertexAttribArray(texcoord_location);
+	myTexture texture;
+	texture.load(".\\resource\\texture\\texture.ktx");
+	GLuint tex = texture.getTextureHandle();
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, tex);
+	glUniform1i(sampler_location, 0);
+
 	glGenBuffers(1, &index_buffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * 3, Index, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * 6, Index, GL_STATIC_DRAW);
 
 	
 	glClearColor(1.0, 0.4, 0.6, 1.0);
@@ -147,10 +162,13 @@ int main()
 		else
 		{
 			glClear(GL_COLOR_BUFFER_BIT);
-			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, NULL);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
 			egl.SwapBuffer();
 		}
 	}
+
+	glUseProgram(0);
+	glDeleteProgram(program);
 	system("pause");
 	return 0;
 } 

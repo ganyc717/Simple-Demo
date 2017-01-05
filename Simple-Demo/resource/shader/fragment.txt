@@ -1,9 +1,10 @@
 #version 300 es
 precision highp float;
 
-in vec3 color;
+in vec2 texcoord;
+uniform sampler2D sampler;
 out vec4 color_out;
 void main()
 {
-    color_out = vec4(color,1.0);
+    color_out = texture2D(sampler,texcoord);
 }
