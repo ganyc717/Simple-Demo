@@ -41,5 +41,21 @@
     <ClInclude Include="include\myTexture.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resource\texture\texture.ktx">
+      <Filter>资源文件</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="resource\shader\fragment.txt">
+      <Filter>资源文件</Filter>
+    </Text>
+    <Text Include="resource\shader\vertex.txt">
+      <Filter>资源文件</Filter>
+    </Text>
   </ItemGroup>
 </Project>

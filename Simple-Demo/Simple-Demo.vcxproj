@@ -25,10 +25,18 @@
     <ClCompile Include="myWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="camera.h" />
     <ClInclude Include="include\fileops.hpp" />
     <ClInclude Include="include\myEGL.h" />
     <ClInclude Include="include\myTexture.h" />
     <ClInclude Include="include\myWindow.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resource\texture\texture.ktx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="resource\shader\fragment.txt" />
+    <Text Include="resource\shader\vertex.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3E6A0453-81E7-4338-9C36-AC12031266AF}</ProjectGuid>

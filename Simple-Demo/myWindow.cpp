@@ -52,7 +52,9 @@ myWindow::myWindow(const char* WindowName, int Width, int Height)
 	
 	hwnd = CreateWindow(WindowName, WindowName, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height, NULL, NULL, NULL, NULL);
 	SetWindowLongPtr(hwnd, 0, (long)this);
-
+	camera.position = glm::vec3(0.0,0.0,100.0);
+	camera.lookAt = glm::vec3(0.0, 0.0, 0.0);
+	camera.up = glm::vec3(0.0, 1.0, 0.0);
 }
 
 
@@ -70,4 +72,9 @@ myWindow::~myWindow()
 HWND myWindow::getMyWindow()
 {
 	return this->hwnd;
+}
+
+Camera myWindow::getCamera()
+{
+	return this->camera;
 }

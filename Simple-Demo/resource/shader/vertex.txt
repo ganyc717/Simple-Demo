@@ -1,7 +1,9 @@
 #version 300 es
+precision highp float;
 
 in vec3 position;
 in vec2 cord;
+uniform vec4 MVP;
 out vec2 texcoord;
 
 void main()

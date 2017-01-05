@@ -3,7 +3,8 @@
 #include"myEGL.h"
 #include"myTexture.h"
 #include<GLES3/gl3.h>
-
+#include<glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 
 using namespace std;
@@ -15,10 +16,10 @@ enum Log_Type
 };
 
 GLfloat Vertex[] = {
-	-1.0,1.0,0.0,
-	1.0,1.0,0.0,
-	1.0,-1.0,0.0,
-	-1.0,-1.0,0.0
+	-3.0,3.0,0.0,
+	3.0,3.0,0.0,
+	3.0,-3.0,0.0,
+	-3.0,-3.0,0.0
 };
 
 GLuint Index[] = {
@@ -138,11 +139,17 @@ int main()
 	glBindTexture(GL_TEXTURE_2D, tex);
 	glUniform1i(sampler_location, 0);
 
+	Camera camera = win.getCamera();
+	glm::mat4 Projection = glm::perspective(glm::radians(60.0f), (float)win.width / (float)win.height, (float)0.1, (float)100.0);
+	glm::mat4 View = glm::lookAt(camera.position, glm::vec3(0.0, 0.0, 0.0), camera.up);
+	glm::mat4 Model = glm::mat4(1.0f);
+	glm::mat4 MVP = Projection * View * Model;
+	GLint MVP_location = glGetUniformLocation(program, "MVP");
+	glUniformMatrix4fv(MVP_location, 1, GL_FALSE, &MVP[0][0]);
+
 	glGenBuffers(1, &index_buffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * 6, Index, GL_STATIC_DRAW);
-
-	
 	glClearColor(1.0, 0.4, 0.6, 1.0);
 
 	bool exit = false;
