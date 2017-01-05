@@ -57,6 +57,24 @@ void myTexture::load(const char* name)
 	gli::gl GL(gli::gl::PROFILE_GL33);
 	gli::gl::format const Format = GL.translate(texture.format(), texture.swizzles());
 
-	glCompressedTexImage2D(GL_TEXTURE_2D, 0, Format.Internal, width, height, 0, 0, texture.data(0, 0, 0));
-	
+	uint32_t bpp;
+	switch (Format.Internal)
+	{
+	case GL_COMPRESSED_RG11_EAC:
+	case GL_COMPRESSED_SIGNED_RG11_EAC:
+	case GL_COMPRESSED_RGBA8_ETC2_EAC:
+	case GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC:
+		bpp = 8;
+		break;
+	default:
+		bpp = 4;
+		break;
+	}
+
+	for (std::size_t level = 0; level < mipLevels; level++)
+	{
+		uint32_t mipmapWidth = texture.extent(level).x;
+		uint32_t mipmapHeight = texture.extent(level).y;
+		glCompressedTexImage2D(GL_TEXTURE_2D, level, Format.Internal, mipmapWidth, mipmapHeight, 0, mipmapWidth * mipmapHeight * bpp / 8, texture.data(0, 0, level));
+	}
 }

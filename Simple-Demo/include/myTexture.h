@@ -11,7 +11,7 @@ public:
 	void load(const char* name);
 private:
 	GLuint handle;
-	GLuint width;
-	GLuint height;
-	GLuint mipLevels;
+	uint32_t width;
+	uint32_t height;
+	uint32_t mipLevels;
 };

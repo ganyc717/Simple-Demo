@@ -89,13 +89,13 @@ int main()
 	egl.InitEGL(win.getMyWindow());
 
 	GLuint vertexshader, fragmentshader, program = 0;
-	if (!GenerateShader(".\\resource\\shader\\vertex.txt", vertexshader, GL_VERTEX_SHADER))
+	if (!GenerateShader(".\\shader\\vertex.txt", vertexshader, GL_VERTEX_SHADER))
 	{
 		glDeleteShader(vertexshader);
 		system("pause");
 		return 0;
 	}
-	if (!GenerateShader(".\\resource\\shader\\fragment.txt", fragmentshader, GL_FRAGMENT_SHADER))
+	if (!GenerateShader(".\\shader\\fragment.txt", fragmentshader, GL_FRAGMENT_SHADER))
 	{
 		glDeleteShader(vertexshader);
 		glDeleteShader(fragmentshader);
@@ -133,7 +133,7 @@ int main()
 	glEnableVertexAttribArray(position_location);
 	glEnableVertexAttribArray(texcoord_location);
 	myTexture texture;
-	texture.load(".\\resource\\texture\\texture.ktx");
+	texture.load(".\\texture\\texture.ktx");
 	GLuint tex = texture.getTextureHandle();
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, tex);
