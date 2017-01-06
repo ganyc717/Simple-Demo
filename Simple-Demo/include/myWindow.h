@@ -12,13 +12,21 @@ public:
 	~myWindow();
 	void show();
 	HWND getMyWindow();
+	void bottonClickDown(int x, int y);
+	void bottonClickUp();
+	Camera getCamera();
+	void setCameraPosition(float x, float y, float z);
+	bool getClickedPosition(int& x, int& y);
+
 	int width;
 	int height;
 	bool changeSize;
-	Camera getCamera();
 private:
 	WNDCLASS wndClass;
 	HWND hwnd;
 	char winName[64];
+	int botton_click_x;
+	int botton_click_y;
+	bool button_clicked;
 	Camera camera;
 };

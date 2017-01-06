@@ -4,8 +4,8 @@
 #include"myTexture.h"
 #include<GLES3/gl3.h>
 #include<glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-
 
 using namespace std;
 
@@ -15,12 +15,15 @@ enum Log_Type
 	PROGRAM
 };
 
+
+
 GLfloat Vertex[] = {
 	-3.0,3.0,0.0,
 	3.0,3.0,0.0,
 	3.0,-3.0,0.0,
 	-3.0,-3.0,0.0
 };
+
 
 GLuint Index[] = {
 	0,1,2,
@@ -139,19 +142,11 @@ int main()
 	glBindTexture(GL_TEXTURE_2D, tex);
 	glUniform1i(sampler_location, 0);
 
-	Camera camera = win.getCamera();
-	glm::mat4 Projection = glm::perspective(glm::radians(60.0f), (float)win.width / (float)win.height, (float)0.1, (float)100.0);
-	glm::mat4 View = glm::lookAt(camera.position, glm::vec3(0.0, 0.0, 0.0), camera.up);
-	glm::mat4 Model = glm::mat4(1.0f);
-	glm::mat4 MVP = Projection * View * Model;
-	GLint MVP_location = glGetUniformLocation(program, "MVP");
-	glUniformMatrix4fv(MVP_location, 1, GL_FALSE, &MVP[0][0]);
-
 	glGenBuffers(1, &index_buffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * 6, Index, GL_STATIC_DRAW);
 	glClearColor(1.0, 0.4, 0.6, 1.0);
-
+	glViewport(0, 0, win.width, win.height);
 	bool exit = false;
 	MSG msg;
 	while (!exit) 
@@ -169,6 +164,14 @@ int main()
 		else
 		{
 			glClear(GL_COLOR_BUFFER_BIT);
+			glm::mat4 Projection = glm::perspective(glm::radians(60.0f), (float)win.width / (float)win.height, (float)0.1, (float)100.0);
+			glm::mat4 View = glm::lookAt(win.getCamera().position, glm::vec3(0.0, 0.0, 0.0), win.getCamera().up);
+			glm::mat4 Model = glm::mat4(1.0);
+			glm::mat4 MVP = Projection * View * Model;
+
+			GLint MVP_location = glGetUniformLocation(program, "MVP");
+			glUniformMatrix4fv(MVP_location, 1, GL_FALSE, glm::value_ptr(MVP));
+
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
 			egl.SwapBuffer();
 		}
