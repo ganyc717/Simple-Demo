@@ -20,36 +20,90 @@ LRESULT CALLBACK defaultCallback(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
 	case WM_MOUSEMOVE:
 	{
 		int x, y;
-		static int x_pre = -1;
-		static int y_pre = -1;
 		if (window->getClickedPosition(x, y))
 		{
 			int position_x = LOWORD(lParam);
 			int position_y = HIWORD(lParam);
-			if (x_pre == -1 && y_pre == -1)
-			{
-				x_pre = position_x;
-				y_pre = position_y;
-				break;
-			}
-			float vertical = y_pre - position_y;
-			float horizen = x_pre - position_x;
+			float vertical = y - position_y;
+			float horizen = x - position_x;
 			float angle_horizen = horizen / ((float)window->width / 2)*90.0; // 90 degree per half screen
 			float angle_vertical = vertical / ((float)window->height / 2)*60.0; // 60 degree per half screen
 			glm::mat4 roatation = glm::mat4(1.0);
 			roatation = glm::rotate(roatation, glm::radians(angle_horizen), glm::vec3(0.0, 1.0, 0.0));
 			roatation = glm::rotate(roatation, glm::radians(angle_vertical), glm::vec3(1.0, 0.0, 0.0));
 
-			glm::vec4 newPosition = roatation * glm::vec4(window->getCamera().position, 1.0);
-			window->setCameraPosition(newPosition.x, newPosition.y, newPosition.z);
-			x_pre = position_x;
-			y_pre = position_y;
+			glm::vec4 newPosition = roatation * glm::vec4(window->getCamera()->position, 1.0);
+			window->getCamera()->position = glm::vec3(newPosition);
+			window->setClickedPosition(position_x, position_y);
 		}
-		else
+		break;
+	}
+	case WM_CHAR:
+		switch (wParam)
 		{
-			x_pre = -1;
-			y_pre = -1;
+		case 'w':
+		{
+			glm::vec3 position = window->getCamera()->position;
+			glm::vec3 lookat = window->getCamera()->lookAt;
+			glm::vec3 direction = position - lookat;
+			if (glm::dot(direction, direction) <= 0.04) // length <= 0.2
+				break;
+			else
+			{
+				window->getCamera()->position -= (float)0.1 * glm::normalize(direction);
+			}
+			break;
 		}
+		case 's':
+		{
+			glm::vec3 position = window->getCamera()->position;
+			glm::vec3 lookat = window->getCamera()->lookAt;
+			glm::vec3 direction = position - lookat;
+			if (glm::dot(direction, direction) >= 9960.04) // length >= 99.8
+				break;
+			else
+			{
+				window->getCamera()->position += (float)0.1 * glm::normalize(direction);
+			}
+			break;
+		}
+		case 'a':
+		{
+			float horizen = -3.0; // 3 degree per time
+			glm::mat4 roatation = glm::mat4(1.0);
+			roatation = glm::rotate(roatation, glm::radians(horizen), glm::vec3(0.0, 1.0, 0.0));
+
+			glm::vec4 newPosition = roatation * glm::vec4(window->getCamera()->position, 1.0);
+			window->getCamera()->position = glm::vec3(newPosition);
+			break;
+		}
+		case 'd':
+		{
+			float horizen = 3.0; // 3 degree per time
+			glm::mat4 roatation = glm::mat4(1.0);
+			roatation = glm::rotate(roatation, glm::radians(horizen), glm::vec3(0.0, 1.0, 0.0));
+
+			glm::vec4 newPosition = roatation * glm::vec4(window->getCamera()->position, 1.0);
+			window->getCamera()->position = glm::vec3(newPosition);
+			break;
+		}
+		default:
+			break;
+		}
+		break;
+	case WM_MOUSEWHEEL:
+	{
+		int zDelta = (short)HIWORD(wParam);
+		zDelta *= -1;
+		std::cout << zDelta << std::endl;
+		glm::vec3 position = window->getCamera()->position;
+		glm::vec3 lookat = window->getCamera()->lookAt;
+		glm::vec3 direction = position - lookat;
+		if (glm::dot(direction, direction) <= 0.16 && zDelta < 0)  // length <= 0.4 
+			break;
+		if (glm::dot(direction, direction) >= 9920.16 && zDelta > 0)//  length >= 99.6
+			break;
+		window->getCamera()->position += (float)(((float)zDelta) / 120.0 * 0.2) * glm::normalize(direction); // 0.2 per zDelta
 		break;
 	}
 	case WM_DESTROY:
@@ -141,9 +195,19 @@ bool myWindow::getClickedPosition(int& x, int& y)
 	return button_clicked;
 }
 
-void myWindow::setCameraPosition(float x, float y, float z)
+bool myWindow::setClickedPosition(int x, int y)
 {
-	camera.position = glm::vec3(x, y, z);
+	if (!button_clicked)
+	{
+		botton_click_x = -1;
+		botton_click_y = -1;
+	}
+	else
+	{
+		botton_click_y = y;
+		botton_click_x = x;
+	}
+	return button_clicked;
 }
 
 HWND myWindow::getMyWindow()
@@ -151,7 +215,7 @@ HWND myWindow::getMyWindow()
 	return this->hwnd;
 }
 
-Camera myWindow::getCamera()
+Camera* myWindow::getCamera()
 {
-	return this->camera;
+	return &this->camera;
 }

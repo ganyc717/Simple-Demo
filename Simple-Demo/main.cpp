@@ -165,7 +165,7 @@ int main()
 		{
 			glClear(GL_COLOR_BUFFER_BIT);
 			glm::mat4 Projection = glm::perspective(glm::radians(60.0f), (float)win.width / (float)win.height, (float)0.1, (float)100.0);
-			glm::mat4 View = glm::lookAt(win.getCamera().position, glm::vec3(0.0, 0.0, 0.0), win.getCamera().up);
+			glm::mat4 View = glm::lookAt(win.getCamera()->position, glm::vec3(0.0, 0.0, 0.0), win.getCamera()->up);
 			glm::mat4 Model = glm::mat4(1.0);
 			glm::mat4 MVP = Projection * View * Model;
 

@@ -14,9 +14,10 @@ public:
 	HWND getMyWindow();
 	void bottonClickDown(int x, int y);
 	void bottonClickUp();
-	Camera getCamera();
-	void setCameraPosition(float x, float y, float z);
+	Camera* getCamera();
+
 	bool getClickedPosition(int& x, int& y);
+	bool setClickedPosition(int x, int y);
 
 	int width;
 	int height;
