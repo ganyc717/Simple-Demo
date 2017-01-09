@@ -2,6 +2,7 @@
 #include"fileops.hpp"
 #include"myEGL.h"
 #include"myTexture.h"
+#include"myModel.h"
 #include<GLES3/gl3.h>
 #include<glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -92,13 +93,13 @@ int main()
 	egl.InitEGL(win.getMyWindow());
 
 	GLuint vertexshader, fragmentshader, program = 0;
-	if (!GenerateShader(".\\shader\\vertex.txt", vertexshader, GL_VERTEX_SHADER))
+	if (!GenerateShader(".\\shader\\assimp_vertex.txt", vertexshader, GL_VERTEX_SHADER))
 	{
 		glDeleteShader(vertexshader);
 		system("pause");
 		return 0;
 	}
-	if (!GenerateShader(".\\shader\\fragment.txt", fragmentshader, GL_FRAGMENT_SHADER))
+	if (!GenerateShader(".\\shader\\assimp_fragment.txt", fragmentshader, GL_FRAGMENT_SHADER))
 	{
 		glDeleteShader(vertexshader);
 		glDeleteShader(fragmentshader);
@@ -126,6 +127,14 @@ int main()
 	glDeleteShader(vertexshader);
 	glDeleteShader(fragmentshader);
 
+
+
+	myShader shader;
+	shader.program = program;
+	myModel model;
+	model.loadModel(".\\model\\base.stl");
+
+	/*
 	GLint texcoord_location = glGetAttribLocation(program, "cord");
 	GLint position_location = glGetAttribLocation(program, "position");
 	GLint sampler_location = glGetUniformLocation(program, "sampler");
@@ -145,7 +154,11 @@ int main()
 	glGenBuffers(1, &index_buffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * 6, Index, GL_STATIC_DRAW);
-	glClearColor(1.0, 0.4, 0.6, 1.0);
+	glClearColor(1.0, 0.4, 0.6, 1.0);*/
+
+	
+
+
 	glViewport(0, 0, win.width, win.height);
 	bool exit = false;
 	MSG msg;
@@ -171,8 +184,9 @@ int main()
 
 			GLint MVP_location = glGetUniformLocation(program, "MVP");
 			glUniformMatrix4fv(MVP_location, 1, GL_FALSE, glm::value_ptr(MVP));
-
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
+			/*
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);*/
+			model.Draw(shader);
 			egl.SwapBuffer();
 		}
 	}
