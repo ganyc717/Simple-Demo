@@ -130,8 +130,8 @@ myMesh myModel::processMesh(aiMesh* mesh, const aiScene* scene)
 		if (mesh->HasPositions())
 		{
 			vertex.Position.x = mesh->mVertices[i].x;
-			vertex.Position.x = mesh->mVertices[i].y;
-			vertex.Position.x = mesh->mVertices[i].z;
+			vertex.Position.y = mesh->mVertices[i].y;
+			vertex.Position.z = mesh->mVertices[i].z;
 		}
 		if (mesh->HasNormals())
 		{

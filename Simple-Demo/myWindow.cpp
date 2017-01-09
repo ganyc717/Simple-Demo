@@ -1,6 +1,8 @@
 #include"myWindow.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include<iostream>
+#define PI 3.14159265358979323846
+
 
 LRESULT CALLBACK defaultCallback(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	myWindow* window = (myWindow*)GetWindowLongPtr(hWnd, 0);
@@ -32,8 +34,23 @@ LRESULT CALLBACK defaultCallback(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
 			roatation = glm::rotate(roatation, glm::radians(angle_horizen), glm::vec3(0.0, 1.0, 0.0));
 			roatation = glm::rotate(roatation, glm::radians(angle_vertical), glm::vec3(1.0, 0.0, 0.0));
 
-			glm::vec4 newPosition = roatation * glm::vec4(window->getCamera()->position, 1.0);
+			glm::vec4 newPosition = roatation * glm::vec4(window->getCamera()->position - window->getCamera()->lookAt, 1.0) + glm::vec4(window->getCamera()->lookAt, 0.0);
 			window->getCamera()->position = glm::vec3(newPosition);
+			{
+				glm::vec3 direction = window->getCamera()->position - window->getCamera()->lookAt;
+				float length = glm::sqrt(glm::dot(direction, direction));
+				assert(length > 0);
+				float alpha = glm::acos(direction.y / length);
+				float beta = glm::radians(angle_vertical);
+				if (window->getCamera()->up.y > 0 && alpha + beta < 0 && alpha > 0)
+					window->getCamera()->up.y = -window->getCamera()->up.y;
+				if(window->getCamera()->up.y < 0 && alpha + beta > 0 && alpha <0)
+					window->getCamera()->up.y = -window->getCamera()->up.y;
+				if(window->getCamera()->up.y > 0 && alpha + beta > PI && alpha < PI)
+					window->getCamera()->up.y = -window->getCamera()->up.y;
+				if(window->getCamera()->up.y < 0 && alpha + beta > PI && alpha > PI)
+					window->getCamera()->up.y = -window->getCamera()->up.y;
+			}
 			window->setClickedPosition(position_x, position_y);
 		}
 		break;
@@ -148,7 +165,7 @@ myWindow::myWindow(const char* WindowName, int Width, int Height)
 	
 	hwnd = CreateWindow(WindowName, WindowName, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height, NULL, NULL, NULL, NULL);
 	SetWindowLongPtr(hwnd, 0, (long)this);
-	camera.position = glm::vec3(0.0,0.0,95.0);
+	camera.position = glm::vec3(0.0,0.0,-200.0);
 	camera.lookAt = glm::vec3(0.0, 0.0, 0.0);
 	camera.up = glm::vec3(0.0, 1.0, 0.0);
 	botton_click_x = 0;
