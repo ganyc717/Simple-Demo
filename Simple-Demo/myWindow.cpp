@@ -33,24 +33,27 @@ LRESULT CALLBACK defaultCallback(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
 			glm::mat4 roatation = glm::mat4(1.0);
 			roatation = glm::rotate(roatation, glm::radians(angle_horizen), glm::vec3(0.0, 1.0, 0.0));
 			roatation = glm::rotate(roatation, glm::radians(angle_vertical), glm::vec3(1.0, 0.0, 0.0));
-
 			glm::vec4 newPosition = roatation * glm::vec4(window->getCamera()->position - window->getCamera()->lookAt, 1.0) + glm::vec4(window->getCamera()->lookAt, 0.0);
-			window->getCamera()->position = glm::vec3(newPosition);
+
+
+			glm::vec3 direction = window->getCamera()->position - window->getCamera()->lookAt;
+			float length = glm::sqrt(glm::dot(direction, direction));
+			glm::vec3 up = window->getCamera()->up;
+			assert(length > 0);
+			float alpha = glm::acos(direction.y / length);
+			float beta = glm::radians(angle_vertical);
+			if (up.y < 0)
+				alpha = -alpha;
+
+			if ((alpha >= 0 && alpha - beta < 0) ||
+				(alpha >= -PI && alpha - beta < -PI) ||
+				(alpha <= 0 && alpha - beta > 0) ||
+				(alpha <= PI && alpha - beta > PI))
 			{
-				glm::vec3 direction = window->getCamera()->position - window->getCamera()->lookAt;
-				float length = glm::sqrt(glm::dot(direction, direction));
-				assert(length > 0);
-				float alpha = glm::acos(direction.y / length);
-				float beta = glm::radians(angle_vertical);
-				if (window->getCamera()->up.y > 0 && alpha + beta < 0 && alpha > 0)
-					window->getCamera()->up.y = -window->getCamera()->up.y;
-				if(window->getCamera()->up.y < 0 && alpha + beta > 0 && alpha <0)
-					window->getCamera()->up.y = -window->getCamera()->up.y;
-				if(window->getCamera()->up.y > 0 && alpha + beta > PI && alpha < PI)
-					window->getCamera()->up.y = -window->getCamera()->up.y;
-				if(window->getCamera()->up.y < 0 && alpha + beta > PI && alpha > PI)
-					window->getCamera()->up.y = -window->getCamera()->up.y;
+				window->getCamera()->up.y *= -1;
 			}
+
+			window->getCamera()->position = glm::vec3(newPosition);
 			window->setClickedPosition(position_x, position_y);
 		}
 		break;
@@ -60,15 +63,25 @@ LRESULT CALLBACK defaultCallback(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
 		{
 		case 'w':
 		{
+			
 			glm::vec3 position = window->getCamera()->position;
 			glm::vec3 lookat = window->getCamera()->lookAt;
 			glm::vec3 direction = position - lookat;
-			if (glm::dot(direction, direction) <= 0.04) // length <= 0.2
-				break;
-			else
+			glm::vec3 up = window->getCamera()->up;
+			float length = glm::sqrt(glm::dot(direction, direction));
+			float alpha = glm::acos(direction.y / length);
+			float beta = glm::radians(3.5f); // 3.5 degree per time
+			if (up.y < 0)
+				alpha = -alpha;
+			if ((alpha >= 0 && alpha - beta < 0) ||
+				(alpha >= -PI && alpha - beta < -PI))
 			{
-				window->getCamera()->position -= (float)0.1 * glm::normalize(direction);
+				window->getCamera()->up.y *= -1;
 			}
+			glm::mat4 roatation = glm::mat4(1.0);
+			roatation = glm::rotate(roatation, beta, glm::vec3(1.0, 0.0, 0.0));
+			glm::vec4 newPosition = roatation * glm::vec4(window->getCamera()->position - window->getCamera()->lookAt, 1.0) + glm::vec4(window->getCamera()->lookAt, 0.0);
+			window->getCamera()->position = glm::vec3(newPosition);
 			break;
 		}
 		case 's':
@@ -76,12 +89,21 @@ LRESULT CALLBACK defaultCallback(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
 			glm::vec3 position = window->getCamera()->position;
 			glm::vec3 lookat = window->getCamera()->lookAt;
 			glm::vec3 direction = position - lookat;
-			if (glm::dot(direction, direction) >= 9960.04) // length >= 99.8
-				break;
-			else
+			glm::vec3 up = window->getCamera()->up;
+			float length = glm::sqrt(glm::dot(direction, direction));
+			float alpha = glm::acos(direction.y / length);
+			if (up.y < 0)
+				alpha = -alpha;
+			float beta = glm::radians(-3.5f); // 3.5 degree per time
+			if ((alpha <= 0 && alpha - beta > 0) ||
+				(alpha <= PI && alpha - beta > PI))
 			{
-				window->getCamera()->position += (float)0.1 * glm::normalize(direction);
+				window->getCamera()->up.y *= -1;
 			}
+			glm::mat4 roatation = glm::mat4(1.0);
+			roatation = glm::rotate(roatation, beta, glm::vec3(1.0, 0.0, 0.0));
+			glm::vec4 newPosition = roatation * glm::vec4(window->getCamera()->position - window->getCamera()->lookAt, 1.0) + glm::vec4(window->getCamera()->lookAt, 0.0);
+			window->getCamera()->position = glm::vec3(newPosition);
 			break;
 		}
 		case 'a':
@@ -105,6 +127,7 @@ LRESULT CALLBACK defaultCallback(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
 			break;
 		}
 		default:
+			std::cout << wParam << std::endl;
 			break;
 		}
 		break;
@@ -117,8 +140,6 @@ LRESULT CALLBACK defaultCallback(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
 		glm::vec3 lookat = window->getCamera()->lookAt;
 		glm::vec3 direction = position - lookat;
 		if (glm::dot(direction, direction) <= 0.16 && zDelta < 0)  // length <= 0.4 
-			break;
-		if (glm::dot(direction, direction) >= 9920.16 && zDelta > 0)//  length >= 99.6
 			break;
 		window->getCamera()->position += (float)(((float)zDelta) / 120.0 * 0.2) * glm::normalize(direction); // 0.2 per zDelta
 		break;
@@ -165,7 +186,7 @@ myWindow::myWindow(const char* WindowName, int Width, int Height)
 	
 	hwnd = CreateWindow(WindowName, WindowName, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height, NULL, NULL, NULL, NULL);
 	SetWindowLongPtr(hwnd, 0, (long)this);
-	camera.position = glm::vec3(0.0,0.0,-200.0);
+	camera.position = glm::vec3(0.0,0.0,-100.0);
 	camera.lookAt = glm::vec3(0.0, 0.0, 0.0);
 	camera.up = glm::vec3(0.0, 1.0, 0.0);
 	botton_click_x = 0;
