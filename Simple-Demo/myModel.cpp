@@ -110,7 +110,8 @@ std::vector<Texture> myModel::loadMaterialTextures(aiMaterial* mat, aiTextureTyp
 		aiString str;
 		mat->GetTexture(type, i, &str);
 		Texture texture;
-		texture.texture.load(str.C_Str());
+		const char* name = str.C_Str(); 
+		texture.texture.load(name);
 		texture.id = texture.texture.getTextureHandle();
 		texture.type = texType;
 		textures.push_back(texture);
@@ -154,14 +155,16 @@ myMesh myModel::processMesh(aiMesh* mesh, const aiScene* scene)
 		for (GLuint j = 0; j < face.mNumIndices; j++)
 			indices.push_back(face.mIndices[j]);
 	}
-	
+
 	if (mesh->mMaterialIndex >= 0)
 	{
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+		
 		std::vector<Texture> diffuseMaps = this->loadMaterialTextures(material, aiTextureType_DIFFUSE, DIFFUSE);
 		textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 		std::vector<Texture> specularMaps = this->loadMaterialTextures(material, aiTextureType_SPECULAR, SPECULAR);
 		textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+		
 	}
 
 	return myMesh(vertices, indices, textures);

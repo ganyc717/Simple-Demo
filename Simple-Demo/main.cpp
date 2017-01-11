@@ -132,7 +132,7 @@ int main()
 	myShader shader;
 	shader.program = program;
 	myModel model;
-	model.loadModel(".\\model\\base.stl");
+	model.loadModel(".\\model\\cat.obj");
 
 	/*
 	GLint texcoord_location = glGetAttribLocation(program, "cord");
@@ -145,7 +145,7 @@ int main()
 	glEnableVertexAttribArray(position_location);
 	glEnableVertexAttribArray(texcoord_location);
 	myTexture texture;
-	texture.load(".\\texture\\texture.ktx");
+	texture.load("texture.ktx");
 	GLuint tex = texture.getTextureHandle();
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, tex);

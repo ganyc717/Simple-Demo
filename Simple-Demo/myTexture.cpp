@@ -1,6 +1,8 @@
 #include"myTexture.h"
 #include<iostream>
 
+#define TEXTURE_DIRECTORY ".\\texture\\"
+
 myTexture::myTexture()
 {
 	handle = 0;
@@ -33,12 +35,15 @@ GLuint myTexture::getTextureHandle()
 
 void myTexture::load(const char* name)
 {
+	std::string directory = TEXTURE_DIRECTORY;
+	std::string filename = name;
+	std::string path = directory + filename;
 	if (handle == 0)
 	{
 		std::cout << "failed to create texture" << std::endl;
 		return;
 	}
-	gli::texture2d texture(gli::load(name));
+	gli::texture2d texture(gli::load(path));
 
 	if (texture.empty())
 	{
