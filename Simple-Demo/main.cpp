@@ -16,28 +16,6 @@ enum Log_Type
 	PROGRAM
 };
 
-
-
-GLfloat Vertex[] = {
-	-3.0,3.0,0.0,
-	3.0,3.0,0.0,
-	3.0,-3.0,0.0,
-	-3.0,-3.0,0.0
-};
-
-
-GLuint Index[] = {
-	0,1,2,
-	2,3,0
-};
-
-GLfloat Texcoord[] = {
-	0.0,0.0,
-	1.0,0.0,
-	1.0,1.0,
-	0.0,1.0
-};
-
 void PrintLog(GLuint handle,Log_Type type)
 {
 	GLint log_length = 0;

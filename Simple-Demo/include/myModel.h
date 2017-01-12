@@ -10,12 +10,7 @@
 class myMesh;
 class myShader;
 
-enum textureType
-{
-	MATERIAL,
-	DIFFUSE,
-	SPECULAR
-};
+
 struct Vertex
 {
 	glm::vec3 Position;
@@ -27,7 +22,7 @@ struct Texture
 {
 	myTexture texture;
 	GLuint id;
-	textureType type;
+	aiTextureType type;
 };
 
 struct myShader
@@ -38,14 +33,10 @@ struct myShader
 class myModel
 {
 public:
-	/*
-	myModel();
-	~myModel();
-	*/
 	bool loadModel(const char* path);
 	void processNode(aiNode* node, const aiScene* scene);
 	myMesh processMesh(aiMesh* mesh, const aiScene* scene);
-	std::vector<Texture> myModel::loadMaterialTextures(aiMaterial* mat, aiTextureType type, textureType texType);
+	std::vector<Texture> myModel::loadMaterialTextures(aiMaterial* mat, aiTextureType type);
 	void Draw(myShader shader);
 private:
 	std::vector<myMesh> meshes;

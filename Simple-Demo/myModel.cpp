@@ -49,14 +49,21 @@ void myMesh::Draw(myShader shader)
 										  // Retrieve texture number (the N in diffuse_textureN)
 		std::stringstream ss;
 		std::string number;
-		textureType name = textures[i].type;
-		if (name == DIFFUSE)
-			ss << diffuseNr++; // Transfer GLuint to stream
-		else if (name == SPECULAR)
-			ss << specularNr++; // Transfer GLuint to stream
+		std::string type_name;
+		aiTextureType type = textures[i].type;
+		if (type == aiTextureType_DIFFUSE)
+		{
+			ss << diffuseNr++;
+			type_name = "diffuse";
+		}
+		else if (type == aiTextureType_SPECULAR)
+		{
+			ss << specularNr++;
+			type_name = "specular";
+		}
 		number = ss.str();
 
-		glUniform1f(glGetUniformLocation(shader.program, ("material." + name + number).c_str()), i);
+		glUniform1f(glGetUniformLocation(shader.program, ("material." + type_name + number).c_str()), i);
 		glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
 	}
 	glActiveTexture(GL_TEXTURE0);
@@ -102,7 +109,7 @@ void myModel::processNode(aiNode* node, const aiScene* scene)
 		processNode(node->mChildren[i], scene);
 	}
 }
-std::vector<Texture> myModel::loadMaterialTextures(aiMaterial* mat, aiTextureType type, textureType texType)
+std::vector<Texture> myModel::loadMaterialTextures(aiMaterial* mat, aiTextureType type)
 {
 	std::vector<Texture> textures;
 	for (GLuint i = 0; i < mat->GetTextureCount(type); i++)
@@ -113,7 +120,7 @@ std::vector<Texture> myModel::loadMaterialTextures(aiMaterial* mat, aiTextureTyp
 		const char* name = str.C_Str(); 
 		texture.texture.load(name);
 		texture.id = texture.texture.getTextureHandle();
-		texture.type = texType;
+		texture.type = type;
 		textures.push_back(texture);
 	}
 	return textures;
@@ -160,11 +167,10 @@ myMesh myModel::processMesh(aiMesh* mesh, const aiScene* scene)
 	{
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 		
-		std::vector<Texture> diffuseMaps = this->loadMaterialTextures(material, aiTextureType_DIFFUSE, DIFFUSE);
+		std::vector<Texture> diffuseMaps = this->loadMaterialTextures(material, aiTextureType_DIFFUSE);
 		textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-		std::vector<Texture> specularMaps = this->loadMaterialTextures(material, aiTextureType_SPECULAR, SPECULAR);
+		std::vector<Texture> specularMaps = this->loadMaterialTextures(material, aiTextureType_SPECULAR);
 		textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-		
 	}
 
 	return myMesh(vertices, indices, textures);
