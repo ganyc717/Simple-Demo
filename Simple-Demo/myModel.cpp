@@ -51,7 +51,7 @@ void myMesh::setupMesh()
 	glBindVertexArray(0);
 }
 
-void myMesh::Draw(myShader shader)
+void myMesh::Draw(GLuint program)
 {
 	GLuint diffuseNr = 1;
 	GLuint specularNr = 1;
@@ -75,7 +75,7 @@ void myMesh::Draw(myShader shader)
 		}
 		number = ss.str();
 
-		glUniform1f(glGetUniformLocation(shader.program, ("material." + type_name + number).c_str()), i);
+		glUniform1f(glGetUniformLocation(program, ("material." + type_name + number).c_str()), i);
 		glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
 	}
 	glActiveTexture(GL_TEXTURE0);
@@ -100,10 +100,11 @@ bool myModel::loadModel(const char* path)
 	return true;
 }
 
-void myModel::Draw(myShader shader)
+void myModel::Draw(GLuint program)
 {
+	glUseProgram(program);
 	for (int i = 0; i < meshes.size(); i++)
-		meshes[i].Draw(shader);
+		meshes[i].Draw(program);
 }
 
 void myModel::processNode(aiNode* node, const aiScene* scene)

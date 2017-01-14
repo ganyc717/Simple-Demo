@@ -1,0 +1,11 @@
+#version 300 es
+precision highp float;
+
+in vec3 color;
+out vec4 color_out;
+uniform sampler2D sampler;
+void main()
+{
+    color_out = texture(sampler,gl_PointCoord);
+    /*color_out = vec4(color,1.0);*/
+}

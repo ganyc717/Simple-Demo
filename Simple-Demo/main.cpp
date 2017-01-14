@@ -3,6 +3,8 @@
 #include"myEGL.h"
 #include"myTexture.h"
 #include"myModel.h"
+#include"myParticle.h"
+
 #include<GLES3/gl3.h>
 #include<glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -64,31 +66,26 @@ bool GenerateShader(const char* name, GLuint& shader, int shadertype)
 	return ret;
 }
 
-int main()
-{
-	myWindow win("demo",800,600);
-	win.show();
-	egl.InitEGL(win.getMyWindow());
 
+
+GLuint GenerateProgram(const char* vertex, const char* fragment)
+{
 	GLuint vertexshader, fragmentshader, program = 0;
-	if (!GenerateShader(".\\shader\\assimp_vertex.txt", vertexshader, GL_VERTEX_SHADER))
+	if (!GenerateShader(vertex, vertexshader, GL_VERTEX_SHADER))
 	{
 		glDeleteShader(vertexshader);
-		system("pause");
 		return 0;
 	}
-	if (!GenerateShader(".\\shader\\assimp_fragment.txt", fragmentshader, GL_FRAGMENT_SHADER))
+	if (!GenerateShader(fragment, fragmentshader, GL_FRAGMENT_SHADER))
 	{
 		glDeleteShader(vertexshader);
 		glDeleteShader(fragmentshader);
-		system("pause");
 		return 0;
 	}
 	program = glCreateProgram();
 	glAttachShader(program, vertexshader);
 	glAttachShader(program, fragmentshader);
 	glLinkProgram(program);
-
 	GLint status = GL_FALSE;
 	glGetProgramiv(program, GL_LINK_STATUS, &status);
 	if (status != GL_TRUE)
@@ -98,41 +95,31 @@ int main()
 		glDeleteShader(vertexshader);
 		glDeleteShader(fragmentshader);
 		glDeleteProgram(program);
-		system("pause");
 		return 0;
 	}
-	glUseProgram(program);
 	glDeleteShader(vertexshader);
 	glDeleteShader(fragmentshader);
+	return program;
+}
+
+int main()
+{
+	myWindow win("demo",800,600);
+	win.show();
+	egl.InitEGL(win.getMyWindow());
+	GLuint program_model = GenerateProgram(".\\shader\\assimp_vertex.txt", ".\\shader\\assimp_fragment.txt");
+	GLuint program_particle = GenerateProgram(".\\shader\\particle_vertex.txt", ".\\shader\\particle_fragment.txt");
 
 
 
-	myShader shader;
-	shader.program = program;
+	glUseProgram(program_model);
 	myModel model;
 	model.loadModel(".\\model\\cat.obj");
-
-	/*
-	GLint texcoord_location = glGetAttribLocation(program, "cord");
-	GLint position_location = glGetAttribLocation(program, "position");
-	GLint sampler_location = glGetUniformLocation(program, "sampler");
-	GLuint index_buffer;
-
-	glVertexAttribPointer(position_location, 3, GL_FLOAT, 0, 0, Vertex);
-	glVertexAttribPointer(texcoord_location, 2, GL_FLOAT, 0, 0, Texcoord);
-	glEnableVertexAttribArray(position_location);
-	glEnableVertexAttribArray(texcoord_location);
+	
+	myParticles particle;
 	myTexture texture;
-	texture.load("texture.ktx");
-	GLuint tex = texture.getTextureHandle();
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, tex);
-	glUniform1i(sampler_location, 0);
-
-	glGenBuffers(1, &index_buffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * 6, Index, GL_STATIC_DRAW);*/
-	glClearColor(1.0, 0.4, 0.6, 1.0);
+	texture.load("particle.ktx");
+	glClearColor(0.0,0.0,0.0, 1.0);
 	glViewport(0, 0, win.width, win.height);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
@@ -158,17 +145,23 @@ int main()
 			glm::mat4 Model = glm::mat4(1.0);
 			glm::mat4 MVP = Projection * View * Model;
 
-			GLint MVP_location = glGetUniformLocation(program, "MVP");
+			GLint MVP_location = glGetUniformLocation(program_model, "MVP");
+			glUseProgram(program_model);
 			glUniformMatrix4fv(MVP_location, 1, GL_FALSE, glm::value_ptr(MVP));
-			/*
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);*/
-			model.Draw(shader);
+			model.Draw(program_model);
+			glUseProgram(program_particle);
+			
+			MVP_location = glGetUniformLocation(program_particle, "MVP");
+			glUniformMatrix4fv(MVP_location, 1, GL_FALSE, glm::value_ptr(MVP));
+			
+			particle.drawParticles(program_particle,texture.getTextureHandle());
 			egl.SwapBuffer();
 		}
 	}
 
 	glUseProgram(0);
-	glDeleteProgram(program);
+	glDeleteProgram(program_model);
+	glDeleteProgram(program_particle);
 	system("pause");
 	return 0;
 } 

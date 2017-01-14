@@ -10,7 +10,6 @@
 
 
 class myMesh;
-class myShader;
 
 
 struct Vertex
@@ -20,11 +19,6 @@ struct Vertex
 	glm::vec2 TexCoords;
 };
 
-
-struct myShader
-{
-	GLuint program;
-};
 
 static std::map<std::string, myTexture> global_texture;
 
@@ -46,7 +40,7 @@ public:
 	void processNode(aiNode* node, const aiScene* scene);
 	myMesh processMesh(aiMesh* mesh, const aiScene* scene);
 	std::vector<Texture> myModel::loadMaterialTextures(aiMaterial* mat, aiTextureType type);
-	void Draw(myShader shader);
+	void Draw(GLuint program);
 private:
 	std::vector<myMesh> meshes;
 };
@@ -59,7 +53,7 @@ public:
 	std::vector<GLuint> indices;
 	std::vector<Texture> textures;
 	myMesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> texture);
-	void Draw(myShader shader);
+	void Draw(GLuint program);
 
 private:
 	GLuint VAO, VBO, EBO;

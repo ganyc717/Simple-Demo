@@ -22,6 +22,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="myModel.cpp" />
     <ClCompile Include="myEGL.cpp" />
+    <ClCompile Include="myParticle.cpp" />
     <ClCompile Include="myTexture.cpp" />
     <ClCompile Include="myWindow.cpp" />
   </ItemGroup>
@@ -30,6 +31,7 @@
     <ClInclude Include="include\fileops.hpp" />
     <ClInclude Include="include\myModel.h" />
     <ClInclude Include="include\myEGL.h" />
+    <ClInclude Include="include\myParticle.h" />
     <ClInclude Include="include\myTexture.h" />
     <ClInclude Include="include\myWindow.h" />
   </ItemGroup>
