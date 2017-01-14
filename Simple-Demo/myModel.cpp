@@ -2,6 +2,18 @@
 #include<iostream>
 #include <sstream>  
 
+
+GLuint Texture::load(std::string name)
+{
+	auto it = global_texture.find(name);
+	if (it == global_texture.end())
+	{
+		global_texture[name].load(name.c_str());
+	}
+	return global_texture[name].getTextureHandle();
+};
+
+
 myMesh::myMesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures)
 {
 	this->vertices = vertices;
@@ -117,9 +129,8 @@ std::vector<Texture> myModel::loadMaterialTextures(aiMaterial* mat, aiTextureTyp
 		aiString str;
 		mat->GetTexture(type, i, &str);
 		Texture texture;
-		const char* name = str.C_Str(); 
-		texture.texture.load(name);
-		texture.id = texture.texture.getTextureHandle();
+		std::string name = str.C_Str(); 
+		texture.id = texture.load(name);
 		texture.type = type;
 		textures.push_back(texture);
 	}

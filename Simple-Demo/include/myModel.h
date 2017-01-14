@@ -3,9 +3,11 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <vector>
+#include <map>
 #include <GLES3/gl3.h>
 #include <glm/glm.hpp>
 #include "myTexture.h"
+
 
 class myMesh;
 class myShader;
@@ -18,17 +20,24 @@ struct Vertex
 	glm::vec2 TexCoords;
 };
 
-struct Texture
-{
-	myTexture texture;
-	GLuint id;
-	aiTextureType type;
-};
 
 struct myShader
 {
 	GLuint program;
 };
+
+static std::map<std::string, myTexture> global_texture;
+
+class Texture
+{
+public:
+	GLuint id = 0;
+	aiTextureType type;
+	GLuint load(std::string name);
+};
+
+
+
 
 class myModel
 {
