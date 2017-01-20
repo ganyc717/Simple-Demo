@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="camera.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="myModel.cpp" />
     <ClCompile Include="myEGL.cpp" />
@@ -27,7 +28,7 @@
     <ClCompile Include="myWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="camera.h" />
+    <ClInclude Include="include\camera.h" />
     <ClInclude Include="include\fileops.hpp" />
     <ClInclude Include="include\myModel.h" />
     <ClInclude Include="include\myEGL.h" />

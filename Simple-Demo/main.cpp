@@ -108,7 +108,7 @@ int main()
 	win.show();
 	egl.InitEGL(win.getMyWindow());
 	GLuint program_model = GenerateProgram(".\\shader\\assimp_vertex.txt", ".\\shader\\assimp_fragment.txt");
-	GLuint program_particle = GenerateProgram(".\\shader\\particle_vertex.txt", ".\\shader\\particle_fragment.txt");
+//	GLuint program_particle = GenerateProgram(".\\shader\\particle_vertex.txt", ".\\shader\\particle_fragment.txt");
 
 
 
@@ -141,7 +141,8 @@ int main()
 		{
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glm::mat4 Projection = glm::perspective(glm::radians(60.0f), (float)win.width / (float)win.height, (float)0.1, (float)500.0);
-			glm::mat4 View = glm::lookAt(win.getCamera()->position, glm::vec3(0.0, 0.0, 0.0), win.getCamera()->up);
+//			glm::mat4 View = glm::lookAt(win.getCamera()->position, glm::vec3(0.0, 0.0, 0.0), win.getCamera()->up);
+			glm::mat4 View = win.getCamera()->getViewMatrix();
 			glm::mat4 Model = glm::mat4(1.0);
 			glm::mat4 MVP = Projection * View * Model;
 
@@ -149,19 +150,19 @@ int main()
 			glUseProgram(program_model);
 			glUniformMatrix4fv(MVP_location, 1, GL_FALSE, glm::value_ptr(MVP));
 			model.Draw(program_model);
-			glUseProgram(program_particle);
+//			glUseProgram(program_particle);
 			
-			MVP_location = glGetUniformLocation(program_particle, "MVP");
-			glUniformMatrix4fv(MVP_location, 1, GL_FALSE, glm::value_ptr(MVP));
+//			MVP_location = glGetUniformLocation(program_particle, "MVP");
+//			glUniformMatrix4fv(MVP_location, 1, GL_FALSE, glm::value_ptr(MVP));
 			
-			particle.drawParticles(program_particle,texture.getTextureHandle());
+//			particle.drawParticles(program_particle,texture.getTextureHandle());
 			egl.SwapBuffer();
 		}
 	}
 
 	glUseProgram(0);
 	glDeleteProgram(program_model);
-	glDeleteProgram(program_particle);
+//	glDeleteProgram(program_particle);
 	system("pause");
 	return 0;
 } 

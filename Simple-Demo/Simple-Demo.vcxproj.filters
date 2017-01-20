@@ -33,6 +33,9 @@
     <ClCompile Include="myParticle.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="camera.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\fileops.hpp">
@@ -47,13 +50,13 @@
     <ClInclude Include="include\myTexture.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="camera.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="include\myModel.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="include\myParticle.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\camera.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

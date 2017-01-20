@@ -1,8 +1,10 @@
 #include"myWindow.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include<iostream>
-#define PI 3.14159265358979323846
-
+#define MOUSE_MOVE_HORIZON_ANGLE 90.0f
+#define MOUSE_MOVE_VERTICAL_ANGLE 60.0f
+#define KEY_MOVE_PACE 0.1f
+#define MOUSEWHEEL_MOVE_PACE 0.1f
 
 LRESULT CALLBACK defaultCallback(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	myWindow* window = (myWindow*)GetWindowLongPtr(hWnd, 0);
@@ -28,32 +30,10 @@ LRESULT CALLBACK defaultCallback(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
 			int position_y = HIWORD(lParam);
 			float vertical = y - position_y;
 			float horizen = x - position_x;
-			float angle_horizen = horizen / ((float)window->width / 2)*90.0; // 90 degree per half screen
-			float angle_vertical = vertical / ((float)window->height / 2)*60.0; // 60 degree per half screen
-			glm::mat4 roatation = glm::mat4(1.0);
-			roatation = glm::rotate(roatation, glm::radians(angle_horizen), glm::vec3(0.0, 1.0, 0.0));
-			roatation = glm::rotate(roatation, glm::radians(angle_vertical), glm::vec3(1.0, 0.0, 0.0));
-			glm::vec4 newPosition = roatation * glm::vec4(window->getCamera()->position - window->getCamera()->lookAt, 1.0) + glm::vec4(window->getCamera()->lookAt, 0.0);
+			float angle_horizen = horizen / ((float)window->width / 2) * MOUSE_MOVE_HORIZON_ANGLE;
+			float angle_vertical = vertical / ((float)window->height / 2) * MOUSE_MOVE_VERTICAL_ANGLE;
 
-
-			glm::vec3 direction = window->getCamera()->position - window->getCamera()->lookAt;
-			float length = glm::sqrt(glm::dot(direction, direction));
-			glm::vec3 up = window->getCamera()->up;
-			assert(length > 0);
-			float alpha = glm::acos(direction.y / length);
-			float beta = glm::radians(angle_vertical);
-			if (up.y < 0)
-				alpha = -alpha;
-
-			if ((alpha >= 0 && alpha - beta < 0) ||
-				(alpha >= -PI && alpha - beta < -PI) ||
-				(alpha <= 0 && alpha - beta > 0) ||
-				(alpha <= PI && alpha - beta > PI))
-			{
-				window->getCamera()->up.y *= -1;
-			}
-
-			window->getCamera()->position = glm::vec3(newPosition);
+			window->getCamera()->rotate(glm::vec3(glm::radians(angle_vertical), glm::radians(angle_horizen), 0.0));
 			window->setClickedPosition(position_x, position_y);
 		}
 		break;
@@ -63,67 +43,36 @@ LRESULT CALLBACK defaultCallback(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
 		{
 		case 'w':
 		{
-			
-			glm::vec3 position = window->getCamera()->position;
-			glm::vec3 lookat = window->getCamera()->lookAt;
-			glm::vec3 direction = position - lookat;
-			glm::vec3 up = window->getCamera()->up;
-			float length = glm::sqrt(glm::dot(direction, direction));
-			float alpha = glm::acos(direction.y / length);
-			float beta = glm::radians(3.5f); // 3.5 degree per time
-			if (up.y < 0)
-				alpha = -alpha;
-			if ((alpha >= 0 && alpha - beta < 0) ||
-				(alpha >= -PI && alpha - beta < -PI))
-			{
-				window->getCamera()->up.y *= -1;
-			}
-			glm::mat4 roatation = glm::mat4(1.0);
-			roatation = glm::rotate(roatation, beta, glm::vec3(1.0, 0.0, 0.0));
-			glm::vec4 newPosition = roatation * glm::vec4(window->getCamera()->position - window->getCamera()->lookAt, 1.0) + glm::vec4(window->getCamera()->lookAt, 0.0);
-			window->getCamera()->position = glm::vec3(newPosition);
+			glm::vec3 direction = window->getCamera()->getDirection();
+			glm::vec3 up = glm::vec3(0.0, 1.0, 0.0);
+			glm::vec3 right = glm::cross(direction, up);
+			glm::vec3 forward = glm::normalize(glm::cross(up, right));
+			window->getCamera()->translate(KEY_MOVE_PACE * forward);
 			break;
 		}
 		case 's':
 		{
-			glm::vec3 position = window->getCamera()->position;
-			glm::vec3 lookat = window->getCamera()->lookAt;
-			glm::vec3 direction = position - lookat;
-			glm::vec3 up = window->getCamera()->up;
-			float length = glm::sqrt(glm::dot(direction, direction));
-			float alpha = glm::acos(direction.y / length);
-			if (up.y < 0)
-				alpha = -alpha;
-			float beta = glm::radians(-3.5f); // 3.5 degree per time
-			if ((alpha <= 0 && alpha - beta > 0) ||
-				(alpha <= PI && alpha - beta > PI))
-			{
-				window->getCamera()->up.y *= -1;
-			}
-			glm::mat4 roatation = glm::mat4(1.0);
-			roatation = glm::rotate(roatation, beta, glm::vec3(1.0, 0.0, 0.0));
-			glm::vec4 newPosition = roatation * glm::vec4(window->getCamera()->position - window->getCamera()->lookAt, 1.0) + glm::vec4(window->getCamera()->lookAt, 0.0);
-			window->getCamera()->position = glm::vec3(newPosition);
+			glm::vec3 direction = window->getCamera()->getDirection();
+			glm::vec3 up = glm::vec3(0.0, 1.0, 0.0);
+			glm::vec3 right = glm::cross(direction, up);
+			glm::vec3 forward = glm::normalize(glm::cross(up, right));
+			window->getCamera()->translate(-KEY_MOVE_PACE * forward);
 			break;
 		}
 		case 'a':
 		{
-			float horizen = -3.0; // 3 degree per time
-			glm::mat4 roatation = glm::mat4(1.0);
-			roatation = glm::rotate(roatation, glm::radians(horizen), glm::vec3(0.0, 1.0, 0.0));
-
-			glm::vec4 newPosition = roatation * glm::vec4(window->getCamera()->position, 1.0);
-			window->getCamera()->position = glm::vec3(newPosition);
+			glm::vec3 direction = window->getCamera()->getDirection();
+			glm::vec3 up = glm::vec3(0.0, 1.0, 0.0);
+			glm::vec3 right = glm::cross(direction, up);
+			window->getCamera()->translate(-KEY_MOVE_PACE * right);
 			break;
 		}
 		case 'd':
 		{
-			float horizen = 3.0; // 3 degree per time
-			glm::mat4 roatation = glm::mat4(1.0);
-			roatation = glm::rotate(roatation, glm::radians(horizen), glm::vec3(0.0, 1.0, 0.0));
-
-			glm::vec4 newPosition = roatation * glm::vec4(window->getCamera()->position, 1.0);
-			window->getCamera()->position = glm::vec3(newPosition);
+			glm::vec3 direction = window->getCamera()->getDirection();
+			glm::vec3 up = glm::vec3(0.0, 1.0, 0.0);
+			glm::vec3 right = glm::cross(direction, up);
+			window->getCamera()->translate(KEY_MOVE_PACE * right);
 			break;
 		}
 		default:
@@ -134,14 +83,12 @@ LRESULT CALLBACK defaultCallback(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
 	case WM_MOUSEWHEEL:
 	{
 		int zDelta = (short)HIWORD(wParam);
-		zDelta *= -1;
-		std::cout << zDelta << std::endl;
-		glm::vec3 position = window->getCamera()->position;
-		glm::vec3 lookat = window->getCamera()->lookAt;
-		glm::vec3 direction = position - lookat;
-		if (glm::dot(direction, direction) <= 0.16 && zDelta < 0)  // length <= 0.4 
-			break;
-		window->getCamera()->position += (float)(((float)zDelta) / 120.0 * 0.2) * glm::normalize(direction); // 0.2 per zDelta
+
+		glm::vec3 direction = window->getCamera()->getDirection();
+		glm::vec3 up = glm::vec3(0.0, 1.0, 0.0);
+		glm::vec3 right = glm::cross(direction, up);
+		glm::vec3 forward = glm::normalize(glm::cross(up, right));
+		window->getCamera()->translate(MOUSEWHEEL_MOVE_PACE * (zDelta / 120) * forward);
 		break;
 	}
 	case WM_DESTROY:
@@ -186,9 +133,8 @@ myWindow::myWindow(const char* WindowName, int Width, int Height)
 	
 	hwnd = CreateWindow(WindowName, WindowName, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height, NULL, NULL, NULL, NULL);
 	SetWindowLongPtr(hwnd, 0, (long)this);
-	camera.position = glm::vec3(0.0,0.0,-3.0);
-	camera.lookAt = glm::vec3(0.0, 0.0, 0.0);
-	camera.up = glm::vec3(0.0, 1.0, 0.0);
+
+	camera.setPosition(glm::vec3(1.0, 0.5, 3.0));
 	botton_click_x = 0;
 	botton_click_y = 0;
 	button_clicked = false;
