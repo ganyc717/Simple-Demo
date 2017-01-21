@@ -1,0 +1,13 @@
+#version 300 es
+precision highp float;
+
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec2 input_texcoord;
+uniform mat4 MVP;
+out vec2 texcoord;
+
+void main()
+{
+      texcoord = input_texcoord;
+      gl_Position = MVP * vec4(position,1.0);
+}

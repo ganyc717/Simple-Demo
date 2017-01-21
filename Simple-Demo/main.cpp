@@ -102,23 +102,59 @@ GLuint GenerateProgram(const char* vertex, const char* fragment)
 	return program;
 }
 
+
+
+
+
+
+GLfloat floor_vertex[] = {
+	-5.0,0.0,5.0,
+	-5.0,0.0,-5.0,
+	5.0,0.0,5.0,
+	5.0,0.0,-5.0
+}; 
+
+GLfloat floor_texcoord[] = {
+	0.0,5.0,
+	0.0,0.0,
+	5.0,5.0,
+	5.0,0.0
+};
+
+
+GLuint floor_index[] = {
+	0,1,2,
+	1,2,3
+};
+
+
+
+
+
+
 int main()
 {
 	myWindow win("demo",800,600);
 	win.show();
 	egl.InitEGL(win.getMyWindow());
 	GLuint program_model = GenerateProgram(".\\shader\\assimp_vertex.txt", ".\\shader\\assimp_fragment.txt");
-//	GLuint program_particle = GenerateProgram(".\\shader\\particle_vertex.txt", ".\\shader\\particle_fragment.txt");
-
-
-
+	
+	GLuint program_floor = GenerateProgram(".\\shader\\floor_vertex.txt", ".\\shader\\floor_fragment.txt");
+	
 	glUseProgram(program_model);
 	myModel model;
 	model.loadModel(".\\model\\cat.obj");
 	
-	myParticles particle;
+	glUseProgram(program_floor);
 	myTexture texture;
-	texture.load("particle.ktx");
+	texture.load("floor.ktx");
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, 0, 0, floor_vertex);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, 0, 0, floor_texcoord);
+
+	
 	glClearColor(0.0,0.0,0.0, 1.0);
 	glViewport(0, 0, win.width, win.height);
 	glEnable(GL_DEPTH_TEST);
@@ -140,29 +176,34 @@ int main()
 		else
 		{
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			
 			glm::mat4 Projection = glm::perspective(glm::radians(60.0f), (float)win.width / (float)win.height, (float)0.1, (float)500.0);
-//			glm::mat4 View = glm::lookAt(win.getCamera()->position, glm::vec3(0.0, 0.0, 0.0), win.getCamera()->up);
 			glm::mat4 View = win.getCamera()->getViewMatrix();
-			glm::mat4 Model = glm::mat4(1.0);
+ 			glm::mat4 Model = glm::mat4(1.0);
 			glm::mat4 MVP = Projection * View * Model;
 
+			
 			GLint MVP_location = glGetUniformLocation(program_model, "MVP");
 			glUseProgram(program_model);
 			glUniformMatrix4fv(MVP_location, 1, GL_FALSE, glm::value_ptr(MVP));
 			model.Draw(program_model);
-//			glUseProgram(program_particle);
 			
-//			MVP_location = glGetUniformLocation(program_particle, "MVP");
-//			glUniformMatrix4fv(MVP_location, 1, GL_FALSE, glm::value_ptr(MVP));
-			
-//			particle.drawParticles(program_particle,texture.getTextureHandle());
+			MVP_location = glGetUniformLocation(program_floor, "MVP");
+			GLint sampler_location = glGetUniformLocation(program_floor, "sampler");
+			glUseProgram(program_floor);
+			glUniformMatrix4fv(MVP_location, 1, GL_FALSE, glm::value_ptr(MVP));
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture.getTextureHandle());
+			glUniform1i(sampler_location, 0);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, floor_index);
+
 			egl.SwapBuffer();
 		}
 	}
 
 	glUseProgram(0);
 	glDeleteProgram(program_model);
-//	glDeleteProgram(program_particle);
+	glDeleteProgram(program_floor);
 	system("pause");
 	return 0;
 } 
