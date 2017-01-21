@@ -4,10 +4,12 @@ precision highp float;
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec2 input_texcoord;
 uniform mat4 MVP;
+uniform mat4 light_MVP;
 out vec2 texcoord;
-
+out vec4 shadowcoord;
 void main()
 {
-      texcoord = input_texcoord;
-      gl_Position = MVP * vec4(position,1.0);
+    texcoord = input_texcoord;
+    shadowcoord = light_MVP * vec4(position,1.0);
+    gl_Position = MVP * vec4(position,1.0);
 }
