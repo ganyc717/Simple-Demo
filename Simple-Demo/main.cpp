@@ -250,7 +250,7 @@ int main()
 
 
 
-
+			
 			MVP_location = glGetUniformLocation(program_floor, "MVP");
 			GLint light_MVP_location = glGetUniformLocation(program_floor, "light_MVP");
 			GLint sampler_location = glGetUniformLocation(program_floor, "sampler");

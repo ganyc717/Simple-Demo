@@ -55,10 +55,12 @@ void myMesh::Draw(GLuint program)
 {
 	GLuint diffuseNr = 1;
 	GLuint specularNr = 1;
+	glUseProgram(program);
 	for (GLuint i = 0; i < textures.size(); i++)
 	{
 		glActiveTexture(GL_TEXTURE0 + i); // Activate proper texture unit before binding
 										  // Retrieve texture number (the N in diffuse_textureN)
+		glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
 		std::stringstream ss;
 		std::string number;
 		std::string type_name;
@@ -66,17 +68,17 @@ void myMesh::Draw(GLuint program)
 		if (type == aiTextureType_DIFFUSE)
 		{
 			ss << diffuseNr++;
-			type_name = "diffuse";
+			type_name = "diffuse_";
 		}
 		else if (type == aiTextureType_SPECULAR)
 		{
 			ss << specularNr++;
-			type_name = "specular";
+			type_name = "specular_";
 		}
 		number = ss.str();
+		
+		glUniform1i(glGetUniformLocation(program, ("material_" + type_name + number).c_str()), i);
 
-		glUniform1f(glGetUniformLocation(program, ("material." + type_name + number).c_str()), i);
-		glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
 	}
 	glActiveTexture(GL_TEXTURE0);
 
