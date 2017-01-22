@@ -92,6 +92,7 @@ bool myEGL::MakeCurrent()
 		MessageBox(NULL, "MakeCurrent Failed", NULL, MB_ICONERROR);
 		return false;
 	}
+	eglSwapInterval(display, 1);
 	return true;
 }
 

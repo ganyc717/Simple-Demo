@@ -14,7 +14,7 @@ static myEGL egl;
 
 
 static glm::vec3 Parallel_Light_Position = glm::vec3(1.0, 1.0, 0.0);
-const float light_rotate_angle = 0.1;
+const float light_rotate_angle = 2.0;
 
 enum Log_Type
 {
