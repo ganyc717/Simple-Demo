@@ -5,10 +5,16 @@ layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
 layout (location = 2) in vec2 cord;
 uniform mat4 MVP;
+uniform vec3 light_direction;
+uniform vec3 eye_position;
+out float diffuse_factor;
 out vec2 texcoord;
 
 void main()
 {
     texcoord = cord;
+    vec3 light = normalize(light_direction);
+    float ndotl = max(0.0,dot(normal,light));
+    diffuse_factor = ndotl;
     gl_Position = MVP * vec4(position,1.0);
 }

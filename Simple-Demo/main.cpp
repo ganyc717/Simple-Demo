@@ -230,7 +230,7 @@ int main()
 			glUniformMatrix4fv(MVP_location, 1, GL_FALSE, glm::value_ptr(light_MVP));
 			model.Draw(program_model_shadow);
 			
-			/////////////////////////////////////////
+			/////////////////////////////////////////Draw the cat
 			
 
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -243,14 +243,19 @@ int main()
 
 			
 			MVP_location = glGetUniformLocation(program_model, "MVP");
+			GLint light_direction_location = glGetUniformLocation(program_model, "light_direction");
+			GLint eye_position_location = glGetUniformLocation(program_model, "eye_position");
 			glUseProgram(program_model);
 			glUniformMatrix4fv(MVP_location, 1, GL_FALSE, glm::value_ptr(MVP));
+			//glUniform3f(light_direction_location, Parallel_Light_Position.x, Parallel_Light_Position.y, Parallel_Light_Position.z);
+			glUniform3fv(light_direction_location,1, glm::value_ptr(Parallel_Light_Position));
+			glUniform3f(eye_position_location, win.getCamera()->getPosition().x, win.getCamera()->getPosition().y, win.getCamera()->getPosition().z);
 			model.Draw(program_model);
 			
 
 
 
-			
+			///////////////////////////////////////////Draw the floor
 			MVP_location = glGetUniformLocation(program_floor, "MVP");
 			GLint light_MVP_location = glGetUniformLocation(program_floor, "light_MVP");
 			GLint sampler_location = glGetUniformLocation(program_floor, "sampler");

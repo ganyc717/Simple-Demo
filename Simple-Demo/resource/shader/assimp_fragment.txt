@@ -1,10 +1,13 @@
 #version 300 es
 precision highp float;
 
+const float ambient_factor = 0.3;
+
 in vec2 texcoord;
+in float diffuse_factor;
 uniform sampler2D material_diffuse_1;
 out vec4 color_out;
 void main()
 {
-    color_out = texture(material_diffuse_1,texcoord);
+    color_out = (ambient_factor + diffuse_factor) * texture(material_diffuse_1,texcoord);
 }

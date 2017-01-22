@@ -1,6 +1,8 @@
 #version 300 es
 precision highp float;
 
+const float ambient_factor = 0.3;
+
 in vec2 texcoord;
 in vec4 shadowcoord;
 out vec4 color_out;
@@ -14,5 +16,5 @@ void main()
         shadow = 0.5;
     else
         shadow = 1.0;
-        color_out = shadow * texture(sampler,texcoord);
+        color_out = shadow * ambient_factor * texture(sampler,texcoord);
 }
