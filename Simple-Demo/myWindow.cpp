@@ -134,7 +134,7 @@ myWindow::myWindow(const char* WindowName, int Width, int Height)
 	hwnd = CreateWindow(WindowName, WindowName, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height, NULL, NULL, NULL, NULL);
 	SetWindowLongPtr(hwnd, 0, (long)this);
 
-	camera.setPosition(glm::vec3(1.0, 0.5, 3.0));
+	camera.setPosition(glm::vec3(1.0, 1.0, 3.0));
 
 	botton_click_x = 0;
 	botton_click_y = 0;

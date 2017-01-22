@@ -5,9 +5,14 @@ const float ambient_factor = 0.3;
 
 in vec2 texcoord;
 in float diffuse_factor;
+in float specular_factor;
 uniform sampler2D material_diffuse_1;
+uniform sampler2D material_specular_1;
 out vec4 color_out;
 void main()
 {
-    color_out = (ambient_factor + diffuse_factor) * texture(material_diffuse_1,texcoord);
+    vec4 color = vec4(0.0);
+    color += (specular_factor) * texture(material_specular_1,texcoord);
+    color += (ambient_factor + diffuse_factor) * texture(material_diffuse_1,texcoord);
+    color_out = color;
 }

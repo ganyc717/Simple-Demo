@@ -247,9 +247,8 @@ int main()
 			GLint eye_position_location = glGetUniformLocation(program_model, "eye_position");
 			glUseProgram(program_model);
 			glUniformMatrix4fv(MVP_location, 1, GL_FALSE, glm::value_ptr(MVP));
-			//glUniform3f(light_direction_location, Parallel_Light_Position.x, Parallel_Light_Position.y, Parallel_Light_Position.z);
 			glUniform3fv(light_direction_location,1, glm::value_ptr(Parallel_Light_Position));
-			glUniform3f(eye_position_location, win.getCamera()->getPosition().x, win.getCamera()->getPosition().y, win.getCamera()->getPosition().z);
+			glUniform3fv(eye_position_location, 1, glm::value_ptr(win.getCamera()->getPosition()));
 			model.Draw(program_model);
 			
 
@@ -273,9 +272,6 @@ int main()
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, texture.getTextureHandle());
 			glUniform1i(sampler_location, 0);
-
-
-
 
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, floor_index);
 			
