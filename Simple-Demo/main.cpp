@@ -15,6 +15,7 @@ static myEGL egl;
 
 
 static glm::vec3 Parallel_Light_Position = glm::vec3(1.0, 1.0, 0.0);
+const float light_rotate_angle = 0.1;
 
 enum Log_Type
 {
@@ -207,12 +208,18 @@ int main()
 		}
 		else
 		{
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			/////////////////////////////////////////////////////////////////////
 			// generate shadow mapping
 			
 			glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 			glViewport(0, 0, 1024, 1024);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			glm::mat4 light_rotate_matrix = glm::mat4(1.0);
+			light_rotate_matrix = glm::rotate(light_rotate_matrix, glm::radians(light_rotate_angle), glm::vec3(0.0, 1.0, 0.0));
+
+			Parallel_Light_Position = glm::vec3(light_rotate_matrix * glm::vec4(Parallel_Light_Position, 1.0));
+
 			glm::mat4 Ortho = glm::ortho(-3.0, 3.0, -3.0, 3.0, 0.1, 10.0);
 
 			glm::mat4 View = glm::lookAt(Parallel_Light_Position, glm::vec3(0.0), glm::vec3(0.0, 1.0, 0.0));
@@ -228,6 +235,7 @@ int main()
 
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			glViewport(0, 0, win.width, win.height);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glm::mat4 Projection = glm::perspective(glm::radians(60.0f), (float)win.width / (float)win.height, (float)0.1, (float)500.0);
 			View = win.getCamera()->getViewMatrix();
  			Model = glm::mat4(1.0);
