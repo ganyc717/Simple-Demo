@@ -3,7 +3,6 @@
 #include"myEGL.h"
 #include"myTexture.h"
 #include"myModel.h"
-#include"myParticle.h"
 
 #include<GLES3/gl3.h>
 #include<glm/glm.hpp>
@@ -161,12 +160,12 @@ int main()
 	myWindow win("demo",800,600);
 	win.show();
 	egl.InitEGL(win.getMyWindow());
-	GLuint program_model = GenerateProgram(".\\shader\\assimp_vertex.txt", ".\\shader\\assimp_fragment.txt");
-	GLuint program_model_shadow = GenerateProgram(".\\shader\\assimp_shadow_vertex.txt", ".\\shader\\assimp_shadow_fragment.txt");
-	GLuint program_floor = GenerateProgram(".\\shader\\floor_vertex.txt", ".\\shader\\floor_fragment.txt");
+	GLuint program_model = GenerateProgram(".\\resource\\shader\\assimp_vertex.txt", ".\\resource\\shader\\assimp_fragment.txt");
+	GLuint program_model_shadow = GenerateProgram(".\\resource\\shader\\assimp_shadow_vertex.txt", ".\\resource\\shader\\assimp_shadow_fragment.txt");
+	GLuint program_floor = GenerateProgram(".\\resource\\shader\\floor_vertex.txt", ".\\resource\\shader\\floor_fragment.txt");
 	
 	myModel model;
-	model.loadModel(".\\model\\cat.obj");
+	model.loadModel(".\\resource\\model\\cat.obj");
 	
 	myTexture texture;
 	texture.load("floor.ktx");

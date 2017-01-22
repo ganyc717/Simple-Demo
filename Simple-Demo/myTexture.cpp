@@ -1,7 +1,7 @@
 #include"myTexture.h"
 #include<iostream>
 
-#define TEXTURE_DIRECTORY ".\\texture\\"
+#define TEXTURE_DIRECTORY ".\\resource\\texture\\"
 
 myTexture::myTexture()
 {
