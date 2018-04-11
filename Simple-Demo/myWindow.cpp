@@ -132,7 +132,7 @@ myWindow::myWindow(const char* WindowName, int Width, int Height)
 	}
 	
 	hwnd = CreateWindow(WindowName, WindowName, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height, NULL, NULL, NULL, NULL);
-	SetWindowLongPtr(hwnd, 0, (long)this);
+	SetWindowLongPtr(hwnd, 0, (LONG_PTR)this);
 
 	camera.setPosition(glm::vec3(1.0, 1.0, 3.0));
 
